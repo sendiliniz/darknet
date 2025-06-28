@@ -1,116 +1,1314 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DarkNet</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;500;600;700&family=Lucida+Grande:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    body {
+    * {
       margin: 0;
-      font-family: 'Inter', sans-serif;
-      background-color: #0e101c;
-      color: #fff;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      /* Light theme variables */
+      --bg-gradient: linear-gradient(135deg, #87CEEB 0%, #98D8E8 25%, #B0E0E6 50%, #E0F6FF 75%, #F0F8FF 100%);
+      --text-primary: #2c3e50;
+      --text-secondary: #64748b;
+      --text-brand: #1e40af;
+      --text-admin: #dc2626;
+      --text-success: #16a34a;
+      
+      --surface-primary: rgba(255, 255, 255, 0.95);
+      --surface-secondary: rgba(248, 250, 252, 0.9);
+      --surface-tertiary: rgba(241, 245, 249, 0.85);
+      --surface-overlay: rgba(255, 255, 255, 0.8);
+      --surface-chat: rgba(255, 255, 255, 0.1);
+      
+      --border-primary: rgba(0, 0, 0, 0.08);
+      --border-secondary: rgba(0, 0, 0, 0.06);
+      --border-accent: rgba(59, 130, 246, 0.3);
+      
+      --shadow-light: rgba(255, 255, 255, 0.9);
+      --shadow-dark: rgba(0, 0, 0, 0.1);
+      
+      --button-primary: linear-gradient(180deg, #dbeafe 0%, #bfdbfe 50%, #93c5fd 100%);
+      --button-primary-hover: linear-gradient(180deg, #bfdbfe 0%, #93c5fd 50%, #60a5fa 100%);
+      --button-secondary: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(248, 250, 252, 0.6) 100%);
+      --button-secondary-hover: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(241, 245, 249, 0.8) 100%);
+      
+      --input-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.8) 100%);
+      --input-focus: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(241, 245, 249, 0.9) 100%);
+      
+      --floating-elements: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="30" r="2" fill="rgba(255,255,255,0.3)"/><circle cx="70" cy="20" r="1.5" fill="rgba(255,255,255,0.2)"/><circle cx="40" cy="70" r="1" fill="rgba(255,255,255,0.4)"/><circle cx="80" cy="60" r="2.5" fill="rgba(255,255,255,0.15)"/><circle cx="10" cy="80" r="1.2" fill="rgba(255,255,255,0.35)"/></svg>') repeat;
+    }
+
+    [data-theme="dark"] {
+      /* Dark theme variables */
+      --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #1a1a2e 75%, #000000 100%);
+      --text-primary: #e2e8f0;
+      --text-secondary: #94a3b8;
+      --text-brand: #60a5fa;
+      --text-admin: #f87171;
+      --text-success: #4ade80;
+      
+      --surface-primary: rgba(30, 41, 59, 0.95);
+      --surface-secondary: rgba(15, 23, 42, 0.9);
+      --surface-tertiary: rgba(2, 6, 23, 0.85);
+      --surface-overlay: rgba(30, 41, 59, 0.8);
+      --surface-chat: rgba(0, 0, 0, 0.3);
+      
+      --border-primary: rgba(255, 255, 255, 0.1);
+      --border-secondary: rgba(255, 255, 255, 0.05);
+      --border-accent: rgba(96, 165, 250, 0.4);
+      
+      --shadow-light: rgba(255, 255, 255, 0.1);
+      --shadow-dark: rgba(0, 0, 0, 0.5);
+      
+      --button-primary: linear-gradient(180deg, #1e40af 0%, #1d4ed8 50%, #1e3a8a 100%);
+      --button-primary-hover: linear-gradient(180deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%);
+      --button-secondary: linear-gradient(180deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.6) 100%);
+      --button-secondary-hover: linear-gradient(180deg, rgba(51, 65, 85, 0.9) 0%, rgba(30, 41, 59, 0.8) 100%);
+      
+      --input-bg: linear-gradient(180deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.8) 100%);
+      --input-focus: linear-gradient(180deg, rgba(51, 65, 85, 0.95) 0%, rgba(30, 41, 59, 0.9) 100%);
+      
+      --floating-elements: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="30" r="2" fill="rgba(96,165,250,0.2)"/><circle cx="70" cy="20" r="1.5" fill="rgba(96,165,250,0.15)"/><circle cx="40" cy="70" r="1" fill="rgba(96,165,250,0.25)"/><circle cx="80" cy="60" r="2.5" fill="rgba(96,165,250,0.1)"/><circle cx="10" cy="80" r="1.2" fill="rgba(96,165,250,0.2)"/></svg>') repeat;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Lucida Grande', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-gradient);
+      background-attachment: fixed;
+      color: var(--text-primary);
       display: flex;
       height: 100vh;
+      overflow: hidden;
+      position: relative;
+      transition: all 0.3s ease;
     }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        var(--floating-elements),
+        radial-gradient(circle at 30% 20%, var(--shadow-light) 0%, transparent 50%),
+        radial-gradient(circle at 70% 80%, var(--border-accent) 0%, transparent 50%);
+      pointer-events: none;
+      animation: floatingBubbles 20s infinite linear;
+      transition: all 0.3s ease;
+    }
+
+    @keyframes floatingBubbles {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(-100px); }
+    }
+
+    .window-controls {
+      position: fixed;
+      top: 8px;
+      left: 8px;
+      display: flex;
+      gap: 6px;
+      z-index: 1000;
+    }
+
+    .control-button {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      box-shadow: 
+        inset 0 1px 2px rgba(255, 255, 255, 0.8),
+        0 1px 3px rgba(0, 0, 0, 0.2);
+      transition: all 0.2s ease;
+    }
+
+    .control-button:hover {
+      transform: scale(1.1);
+      box-shadow: 
+        inset 0 1px 3px rgba(255, 255, 255, 0.9),
+        0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    .control-button.close { 
+      background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+    }
+    .control-button.minimize { 
+      background: linear-gradient(135deg, #ffd93d 0%, #ffcc02 100%);
+    }
+    .control-button.maximize { 
+      background: linear-gradient(135deg, #6bcf7f 0%, #4caf50 100%);
+    }
+
+    .theme-toggle {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 1px solid var(--border-primary);
+      cursor: pointer;
+      background: var(--button-secondary);
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      margin-left: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 
+        inset 0 1px 2px var(--shadow-light),
+        0 1px 3px var(--shadow-dark);
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.1);
+      background: var(--button-secondary-hover);
+      box-shadow: 
+        inset 0 1px 3px var(--shadow-light),
+        0 2px 5px var(--shadow-dark);
+    }
+
     .sidebar {
-      width: 120px;
-      background-color: #1a1c2c;
+      width: 320px;
+      background: linear-gradient(180deg, 
+        var(--surface-primary) 0%,
+        var(--surface-secondary) 50%,
+        var(--surface-tertiary) 100%);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid var(--surface-overlay);
+      border-left: 1px solid var(--border-secondary);
+      box-shadow: 
+        inset 1px 0 0 var(--shadow-light),
+        2px 0 20px var(--shadow-dark),
+        0 0 0 1px var(--border-primary);
       display: flex;
       flex-direction: column;
-      padding: 10px;
-      gap: 10px;
-      border-right: 2px solid #2f334d;
+      position: relative;
+      border-radius: 8px 0 0 8px;
+      margin: 8px 0 8px 8px;
+      transition: all 0.3s ease;
     }
-    .sidebar button {
-      background-color: #2f334d;
+
+    .sidebar-header {
+      padding: 20px 18px 16px;
+      border-bottom: 1px solid var(--border-primary);
+      background: linear-gradient(180deg, 
+        var(--surface-primary) 0%,
+        var(--surface-secondary) 100%);
+      border-radius: 8px 0 0 0;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar-header h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-brand);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      letter-spacing: -0.3px;
+      text-shadow: 0 1px 2px var(--shadow-light);
+      transition: color 0.3s ease;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, 
+        #3b82f6 0%, 
+        #1d4ed8 50%, 
+        #1e40af 100%);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
       color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 12px 8px;
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        0 2px 8px rgba(59, 130, 246, 0.4),
+        0 1px 2px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .voice-controls {
+      padding: 12px 18px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    .voice-button {
+      flex: 1;
+      padding: 8px 10px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 500;
       cursor: pointer;
-      font-size: 12px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      font-family: 'Segoe UI', sans-serif;
+      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.6),
+        0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .voice-button.mute {
+      background: linear-gradient(180deg, #fef2f2 0%, #fecaca 100%);
+      color: #dc2626;
+    }
+
+    .voice-button.mute:hover {
+      background: linear-gradient(180deg, #fee2e2 0%, #fca5a5 100%);
+      transform: translateY(-1px);
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.7),
+        0 3px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .voice-button.call {
+      background: linear-gradient(180deg, #f0fdf4 0%, #bbf7d0 100%);
+      color: #16a34a;
+    }
+
+    .voice-button.call:hover {
+      background: linear-gradient(180deg, #dcfce7 0%, #86efac 100%);
+      transform: translateY(-1px);
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.7),
+        0 3px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .voice-button.end {
+      background: linear-gradient(180deg, #fef2f2 0%, #fecaca 100%);
+      color: #dc2626;
+    }
+
+    .voice-button.end:hover {
+      background: linear-gradient(180deg, #fee2e2 0%, #fca5a5 100%);
+      transform: translateY(-1px);
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.7),
+        0 3px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .voice-status {
+      padding: 8px 18px;
+      font-size: 11px;
+      color: #64748b;
+      text-align: center;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      background: rgba(255, 255, 255, 0.3);
+      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+    }
+
+    .server-list {
+      flex: 1;
+      padding: 16px 12px;
+      overflow-y: auto;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .create-server-btn {
+      width: 100%;
+      background: var(--button-primary);
+      color: var(--text-brand);
+      border: 1px solid var(--border-accent);
+      border-radius: 8px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 
+        inset 0 1px 0 var(--shadow-light),
+        0 2px 6px var(--border-accent),
+        0 1px 2px var(--shadow-dark);
+      text-shadow: 0 1px 1px var(--shadow-light);
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .create-server-btn:hover {
+      transform: translateY(-1px);
+      background: var(--button-primary-hover);
+      box-shadow: 
+        inset 0 1px 0 var(--shadow-light),
+        0 4px 12px var(--border-accent),
+        0 2px 4px var(--shadow-dark);
+    }
+
+    .create-server-btn:active {
+      transform: translateY(0);
+      box-shadow: 
+        inset 0 1px 3px rgba(0, 0, 0, 0.1),
+        0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .server-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .server-name {
+      font-weight: 500;
+      color: #1e40af;
+    }
+
+    .server-meta {
+      font-size: 10px;
+      color: #64748b;
+    }
+
+    .online-count {
+      background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+      color: #16a34a;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: 600;
+      border: 1px solid rgba(34, 197, 94, 0.2);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+
+    .server-list::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .server-list::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 4px;
+    }
+
+    .server-list::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #cbd5e1 0%, #94a3b8 100%);
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+
+    .server-button {
+      width: 100%;
+      background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.8) 0%,
+        rgba(248, 250, 252, 0.6) 100%);
+      color: #334155;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 8px;
+      padding: 12px 14px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
       text-align: left;
-      transition: background-color 0.2s;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        0 1px 3px rgba(0, 0, 0, 0.08);
+      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+      font-family: 'Segoe UI', sans-serif;
     }
-    .sidebar button:hover {
-      background-color: #404466;
+
+    .server-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.4), 
+        transparent);
+      transition: left 0.6s;
     }
+
+    .server-button:hover::before {
+      left: 100%;
+    }
+
+    .server-button:hover {
+      background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.95) 0%,
+        rgba(241, 245, 249, 0.8) 100%);
+      transform: translateY(-1px);
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.95),
+        0 3px 8px rgba(0, 0, 0, 0.12);
+      border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    .server-button.active {
+      background: linear-gradient(180deg, 
+        #dbeafe 0%, 
+        #bfdbfe 50%, 
+        #93c5fd 100%);
+      color: #1e40af;
+      border-color: rgba(59, 130, 246, 0.4);
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        0 4px 12px rgba(59, 130, 246, 0.25),
+        0 2px 4px rgba(0, 0, 0, 0.1);
+      transform: translateY(-1px);
+    }
+
+    .server-icon {
+      font-size: 16px;
+      width: 20px;
+      text-align: center;
+    }
+
     .container {
       flex: 1;
       display: flex;
       flex-direction: column;
-      background: #1a1c2c;
-      border-radius: 0 12px 12px 0;
-      box-shadow: 0 0 20px rgba(0,0,0,0.4);
-      overflow: hidden;
+      background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.9) 0%,
+        rgba(248, 250, 252, 0.85) 50%,
+        rgba(241, 245, 249, 0.8) 100%);
+      backdrop-filter: blur(25px);
+      position: relative;
+      margin: 8px 8px 8px 0;
+      border-radius: 0 8px 8px 0;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 
+        inset 1px 0 0 rgba(255, 255, 255, 0.8),
+        0 8px 32px rgba(0, 0, 0, 0.1);
     }
-    #usernameModal, #chatUI {
-      padding: 20px;
+
+    #usernameModal {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(20px);
     }
-    input, button {
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
+
+    .modal-content {
+      background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.95) 0%,
+        rgba(248, 250, 252, 0.9) 100%);
+      backdrop-filter: blur(30px);
+      border-radius: 12px;
+      padding: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        0 20px 60px rgba(0, 0, 0, 0.15),
+        0 8px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      min-width: 420px;
+      animation: modalSlideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    input[type="text"] {
-      width: calc(100% - 24px);
-      margin-bottom: 10px;
+
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
-    button {
-      background-color: #5865f2;
-      color: #fff;
-      cursor: pointer;
-    }
-    #chatBox {
-      background: #2a2d45;
-      height: 300px;
-      overflow-y: auto;
-      padding: 10px;
-      border-radius: 8px;
-      margin-bottom: 10px;
-    }
-    .message {
-      margin-bottom: 10px;
-    }
-    .message.system {
-      color: #a0a0a0;
-      font-style: italic;
-    }
-    .message span.user {
+
+    .modal-content h2 {
+      font-size: 24px;
       font-weight: 600;
-      color: #70cfff;
+      margin-bottom: 8px;
+      color: #1e40af;
+      text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+      letter-spacing: -0.3px;
     }
+
+    .modal-content p {
+      color: #64748b;
+      margin-bottom: 24px;
+      font-size: 14px;
+      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+    }
+
+    #chatUI {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      padding: 0;
+    }
+
+    .chat-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.9) 0%,
+        rgba(248, 250, 252, 0.8) 100%);
+      backdrop-filter: blur(20px);
+      border-radius: 0 8px 0 0;
+    }
+
+    .chat-header h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1e40af;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      letter-spacing: -0.3px;
+      text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+    }
+
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+      box-shadow: 
+        0 0 8px rgba(34, 197, 94, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.1); }
+    }
+
+    #chatBox {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.1);
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    #chatBox::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    #chatBox::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 4px;
+    }
+
+    #chatBox::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #cbd5e1 0%, #94a3b8 100%);
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+
+    .message {
+      animation: messageSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      opacity: 0;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes messageSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .message.system {
+      color: #64748b;
+      font-style: italic;
+      text-align: center;
+      font-size: 12px;
+      padding: 8px;
+      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+    }
+
+    .message-content {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.8) 0%,
+        rgba(248, 250, 252, 0.6) 100%);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      transition: all 0.3s ease;
+      backdrop-filter: blur(15px);
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .message-content:hover {
+      background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.9) 0%,
+        rgba(241, 245, 249, 0.7) 100%);
+      border-color: rgba(59, 130, 246, 0.3);
+      transform: translateY(-1px);
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.95),
+        0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      border: 2px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    .message-body {
+      flex: 1;
+    }
+
+    .message-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .username {
+      font-weight: 600;
+      color: #1e40af;
+      font-size: 13px;
+      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+    }
+
+    .username.admin {
+      color: #dc2626;
+    }
+
+    .timestamp {
+      font-size: 10px;
+      color: #64748b;
+      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+    }
+
+    .message-text {
+      color: #334155;
+      line-height: 1.5;
+      font-size: 13px;
+      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+    }
+
+    .input-container {
+      padding: 16px 24px;
+      background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.9) 0%,
+        rgba(248, 250, 252, 0.8) 100%);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 0 0 8px 0;
+    }
+
     #sendBox {
       display: flex;
       gap: 10px;
+      align-items: flex-end;
     }
-    #sendBox input[type="text"] {
+
+    input[type="text"] {
       flex: 1;
+      padding: 12px 16px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      font-size: 13px;
+      background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.9) 0%,
+        rgba(248, 250, 252, 0.8) 100%);
+      color: #334155;
+      transition: all 0.3s ease;
+      font-family: 'Segoe UI', sans-serif;
+      backdrop-filter: blur(10px);
+      box-shadow: 
+        inset 0 1px 3px rgba(0, 0, 0, 0.08),
+        0 1px 0 rgba(255, 255, 255, 0.8);
+      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 
+        inset 0 1px 3px rgba(0, 0, 0, 0.1),
+        0 0 0 3px rgba(59, 130, 246, 0.2),
+        0 1px 0 rgba(255, 255, 255, 0.9);
+      background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.95) 0%,
+        rgba(241, 245, 249, 0.9) 100%);
+    }
+
+    input[type="text"]::placeholder {
+      color: #94a3b8;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .file-button, .send-button {
+      padding: 12px 16px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Segoe UI', sans-serif;
+      backdrop-filter: blur(10px);
+      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.8),
+        0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .file-button {
+      background: linear-gradient(180deg, 
+        rgba(241, 245, 249, 0.9) 0%,
+        rgba(226, 232, 240, 0.8) 100%);
+      color: #64748b;
+    }
+
+    .file-button:hover {
+      background: linear-gradient(180deg, 
+        rgba(226, 232, 240, 0.9) 0%,
+        rgba(203, 213, 225, 0.8) 100%);
+      transform: translateY(-1px);
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        0 3px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .send-button {
+      background: linear-gradient(180deg, 
+        #dbeafe 0%, 
+        #bfdbfe 50%, 
+        #93c5fd 100%);
+      color: #1e40af;
+      min-width: 80px;
+      justify-content: center;
+      border-color: rgba(59, 130, 246, 0.3);
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.8),
+        0 2px 6px rgba(59, 130, 246, 0.2);
+    }
+
+    .send-button:hover {
+      transform: translateY(-1px);
+      background: linear-gradient(180deg, 
+        #bfdbfe 0%, 
+        #93c5fd 50%, 
+        #60a5fa 100%);
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .send-button:active {
+      transform: translateY(0);
+      box-shadow: 
+        inset 0 1px 3px rgba(0, 0, 0, 0.1),
+        0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    #error {
+      color: #dc2626;
+      font-size: 12px;
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: linear-gradient(180deg, 
+        rgba(254, 242, 242, 0.9) 0%,
+        rgba(254, 202, 202, 0.8) 100%);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 8px;
+      text-align: center;
+      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.8),
+        0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .voice-modal, .avatar-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(20px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .voice-modal-content, .avatar-modal-content {
+      background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.95) 0%,
+        rgba(248, 250, 252, 0.9) 100%);
+      backdrop-filter: blur(30px);
+      border-radius: 12px;
+      padding: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        0 20px 60px rgba(0, 0, 0, 0.15);
+      text-align: center;
+      min-width: 380px;
+    }
+
+    .voice-modal h3, .avatar-modal h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #1e40af;
+      text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+    }
+
+    .voice-modal-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .modal-button {
+      padding: 10px 20px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Segoe UI', sans-serif;
+      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+      box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.8),
+        0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-button.accept {
+      background: linear-gradient(180deg, #dcfce7 0%, #bbf7d0 100%);
+      color: #16a34a;
+      border-color: rgba(34, 197, 94, 0.3);
+    }
+
+    .modal-button.accept:hover {
+      background: linear-gradient(180deg, #bbf7d0 0%, #86efac 100%);
+      transform: translateY(-1px);
+    }
+
+    .modal-button.decline {
+      background: linear-gradient(180deg, #fef2f2 0%, #fecaca 100%);
+      color: #dc2626;
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .modal-button.decline:hover {
+      background: linear-gradient(180deg, #fecaca 0%, #fca5a5 100%);
+      transform: translateY(-1px);
+    }
+
+    .profile-section {
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .profile-section:hover {
+      background: var(--surface-tertiary);
+    }
+
+    .profile-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 2px solid var(--border-primary);
+      transition: all 0.3s ease;
+      box-shadow: 
+        0 2px 8px var(--shadow-dark),
+        inset 0 1px 0 var(--shadow-light);
+    }
+
+    .profile-avatar:hover {
+      border-color: var(--text-brand);
+      transform: scale(1.05);
+      box-shadow: 
+        0 4px 12px var(--border-accent),
+        inset 0 1px 0 var(--shadow-light);
+    }
+
+    .profile-info {
+      flex: 1;
+    }
+
+    .profile-name {
+      font-weight: 600;
+      color: var(--text-brand);
+      font-size: 14px;
+      margin-bottom: 2px;
+      text-shadow: 0 1px 1px var(--shadow-light);
+    }
+
+    .profile-status {
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-shadow: 0 1px 1px var(--shadow-light);
+    }
+
+    .profile-manage-btn {
+      background: var(--button-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 10px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 
+        inset 0 1px 0 var(--shadow-light),
+        0 1px 2px var(--shadow-dark);
+    }
+
+    .profile-manage-btn:hover {
+      background: var(--button-secondary-hover);
+      color: var(--text-primary);
+      transform: translateY(-1px);
+    }
+
+    .avatar-upload-area {
+      border: 2px dashed rgba(59, 130, 246, 0.3);
+      border-radius: 10px;
+      padding: 30px 16px;
+      margin: 16px 0;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    .avatar-upload-area:hover, .avatar-upload-area.dragover {
+      border-color: #3b82f6;
+      background: rgba(219, 234, 254, 0.6);
+    }
+
+    .avatar-preview {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin: 0 auto 16px;
+      border: 3px solid rgba(255, 255, 255, 0.8);
+      object-fit: cover;
+      box-shadow: 
+        0 4px 12px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    .upload-text {
+      color: #334155;
+      font-size: 14px;
+      margin-bottom: 6px;
+      font-weight: 500;
+      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+    }
+
+    .upload-subtext {
+      color: #64748b;
+      font-size: 12px;
+      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+    }
+
+    #onlineUsersPanel {
+      width: 180px;
+      background: rgba(255, 255, 255, 0.3);
+      border-left: 1px solid rgba(0, 0, 0, 0.08);
+      padding: 16px;
+      overflow-y: auto;
+      backdrop-filter: blur(15px);
+    }
+
+    #onlineUsersPanel h4 {
+      color: #334155;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+    }
+
+    #onlineUsersPanel::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #onlineUsersPanel::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 3px;
+    }
+
+    #onlineUsersPanel::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #cbd5e1 0%, #94a3b8 100%);
+      border-radius: 3px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 280px;
+      }
+
+      .modal-content, .voice-modal-content, .avatar-modal-content {
+        margin: 16px;
+        min-width: unset;
+        width: calc(100% - 32px);
+      }
     }
   </style>
 </head>
 <body>
-  <div class="sidebar">
-    <!-- Server buttons will be dynamically generated -->
+  <div class="window-controls">
+    <button class="control-button close"></button>
+    <button class="control-button minimize"></button>
+    <button class="control-button maximize"></button>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</button>
   </div>
+
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h2>
+        <div class="logo-icon">🌐</div>
+        DarkNet
+      </h2>
+    </div>
+    <div class="voice-controls">
+      <button class="voice-button mute" id="muteBtn" onclick="toggleMute()">
+        🎤 Mute
+      </button>
+      <button class="voice-button call" id="callBtn" onclick="startVoiceCall()">
+        📞 Call
+      </button>
+    </div>
+    <div class="voice-status" id="voiceStatus">
+      Voice: Disconnected
+    </div>
+    <div class="profile-section" id="profileSection" style="display: none;" onclick="openProfileModal()">
+      <img src="" alt="Profile" class="profile-avatar" id="profileAvatar">
+      <div class="profile-info">
+        <div class="profile-name" id="profileName">Username</div>
+        <div class="profile-status" id="profileStatus">Online</div>
+      </div>
+      <button class="profile-manage-btn" onclick="event.stopPropagation(); openAvatarModal()">📸</button>
+    </div>
+    <div class="server-list" id="serverList">
+      <button class="create-server-btn" onclick="openCreateServerModal()">
+        ➕ Create Server
+      </button>
+      <div id="serverButtons">
+        <!-- Server buttons will be dynamically generated -->
+      </div>
+    </div>
+  </div>
+
   <div class="container">
     <div id="usernameModal">
-      <h2>Enter Your Username</h2>
-      <input type="text" id="usernameInput" placeholder="Your name...">
-      <button onclick="setUsername()">Join Chat</button>
-      <p id="error" style="color: red;"></p>
+      <div class="modal-content">
+        <h2>Welcome to DarkNet</h2>
+        <p>Enter your username to join the conversation</p>
+        <input type="text" id="usernameInput" placeholder="Your username...">
+        <button class="send-button" onclick="setUsername()">Join Chat</button>
+        <div id="error" style="display: none;"></div>
+      </div>
     </div>
 
     <div id="chatUI" style="display: none;">
-      <h3 id="currentServer">#general</h3>
-      <div id="chatBox"></div>
-      <div id="sendBox">
-        <input id="message" type="text" placeholder="Type a message...">
-        <input type="file" id="fileInput">
-        <button onclick="sendMessage()">Send</button>
+      <div class="chat-header">
+        <h3 id="currentServer">
+          <span id="serverIcon">💬</span>
+          <span id="serverName">general</span>
+          <div class="status-indicator"></div>
+        </h3>
+      </div>
+
+      <div style="display: flex; flex: 1; overflow: hidden;">
+        <div id="chatBox" style="flex: 1;"></div>
+        
+        <div id="onlineUsersPanel">
+          <h4>
+            👥 Online <span id="onlineCount" class="online-count">0</span>
+          </h4>
+          <div id="onlineUsersList"></div>
+        </div>
+      </div>
+
+      <div class="input-container">
+        <div id="sendBox">
+          <button class="file-button" onclick="document.getElementById('fileInput').click()">
+            📎 File
+          </button>
+          <input type="file" id="fileInput">
+          <input id="message" type="text" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
+          <button class="send-button" onclick="sendMessage()">
+            Send ✈️
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Voice Call Modal -->
+  <div class="voice-modal" id="voiceModal">
+    <div class="voice-modal-content">
+      <h3 id="voiceModalTitle">Incoming Voice Call</h3>
+      <p id="voiceModalMessage">User is calling you...</p>
+      <div class="voice-modal-buttons">
+        <button class="modal-button accept" onclick="acceptVoiceCall()">Accept</button>
+        <button class="modal-button decline" onclick="declineVoiceCall()">Decline</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Avatar Change Modal -->
+  <div class="avatar-modal" id="avatarModal">
+    <div class="avatar-modal-content">
+      <h3>Change Profile Picture</h3>
+      <img src="" alt="Avatar Preview" class="avatar-preview" id="avatarPreview">
+      <div class="avatar-upload-area" id="avatarUploadArea" onclick="document.getElementById('avatarInput').click()">
+        <div class="upload-text">📸 Click or drag to upload</div>
+        <div class="upload-subtext">Supports JPG, PNG, GIF • Max 5MB</div>
+      </div>
+      <input type="file" id="avatarInput" accept="image/*" style="display: none;">
+      <div class="voice-modal-buttons">
+        <button class="modal-button accept" onclick="saveAvatar()">Save</button>
+        <button class="modal-button decline" onclick="closeAvatarModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Settings Modal -->
+  <div class="avatar-modal" id="profileModal">
+    <div class="avatar-modal-content" style="min-width: 500px; max-height: 80vh; overflow-y: auto;">
+      <h3>Profile Settings</h3>
+      <div style="display: flex; flex-direction: column; gap: 16px; text-align: left;">
+        
+        <div style="display: flex; align-items: center; gap: 16px; padding: 16px; background: var(--surface-secondary); border-radius: 8px; border: 1px solid var(--border-primary);">
+          <img src="" alt="Profile" id="profileModalAvatar" style="width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--border-primary);">
+          <div>
+            <div style="font-weight: 600; color: var(--text-primary); margin-bottom: 4px;" id="profileModalName">Username</div>
+            <div style="font-size: 12px; color: var(--text-secondary);" id="profileModalJoined">Joined: ...</div>
+          </div>
+        </div>
+
+        <div>
+          <label style="display: block; font-weight: 500; color: var(--text-primary); margin-bottom: 6px;">Display Name</label>
+          <input type="text" id="profileDisplayName" placeholder="Your display name..." style="width: 100%; padding: 10px 14px; border: 1px solid var(--border-primary); border-radius: 6px; background: var(--input-bg); color: var(--text-primary); font-family: inherit;">
+        </div>
+
+        <div>
+          <label style="display: block; font-weight: 500; color: var(--text-primary); margin-bottom: 6px;">Bio</label>
+          <textarea id="profileBio" placeholder="Tell us about yourself..." rows="3" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border-primary); border-radius: 6px; background: var(--input-bg); color: var(--text-primary); font-family: inherit; resize: vertical;"></textarea>
+          <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">Max 200 characters</div>
+        </div>
+
+        <div>
+          <label style="display: block; font-weight: 500; color: var(--text-primary); margin-bottom: 6px;">Custom Status</label>
+          <input type="text" id="profileCustomStatus" placeholder="What's happening?" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border-primary); border-radius: 6px; background: var(--input-bg); color: var(--text-primary); font-family: inherit;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="display: block; font-weight: 500; color: var(--text-primary); margin-bottom: 6px;">Pronouns</label>
+            <input type="text" id="profilePronouns" placeholder="they/them" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border-primary); border-radius: 6px; background: var(--input-bg); color: var(--text-primary); font-family: inherit;">
+          </div>
+          <div>
+            <label style="display: block; font-weight: 500; color: var(--text-primary); margin-bottom: 6px;">Location</label>
+            <input type="text" id="profileLocation" placeholder="City, Country" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border-primary); border-radius: 6px; background: var(--input-bg); color: var(--text-primary); font-family: inherit;">
+          </div>
+        </div>
+
+        <div>
+          <label style="display: block; font-weight: 500; color: var(--text-primary); margin-bottom: 6px;">Website</label>
+          <input type="url" id="profileWebsite" placeholder="https://yoursite.com" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border-primary); border-radius: 6px; background: var(--input-bg); color: var(--text-primary); font-family: inherit;">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="display: block; font-weight: 500; color: var(--text-primary); margin-bottom: 6px;">Birthday</label>
+            <input type="date" id="profileBirthday" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border-primary); border-radius: 6px; background: var(--input-bg); color: var(--text-primary); font-family: inherit;">
+          </div>
+          <div>
+            <label style="display: block; font-weight: 500; color: var(--text-primary); margin-bottom: 6px;">Favorite Color</label>
+            <input type="color" id="profileFavoriteColor" value="#3b82f6" style="width: 100%; height: 42px; padding: 4px; border: 1px solid var(--border-primary); border-radius: 6px; background: var(--input-bg); cursor: pointer;">
+          </div>
+        </div>
+
+      </div>
+      
+      <div id="profileError" style="color: #dc2626; font-size: 12px; margin-top: 12px; display: none; text-shadow: 0 1px 1px rgba(255,255,255,0.8);"></div>
+      
+      <div class="voice-modal-buttons" style="margin-top: 20px;">
+        <button class="modal-button accept" onclick="saveProfile()">Save Changes</button>
+        <button class="modal-button decline" onclick="closeProfileModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Server Modal -->
+  <div class="avatar-modal" id="createServerModal">
+    <div class="avatar-modal-content">
+      <h3>Create New Server</h3>
+      <p style="color: #64748b; margin-bottom: 16px; text-shadow: 0 1px 1px rgba(255,255,255,0.8);">Enter a name for your new server</p>
+      <input type="text" id="serverNameInput" placeholder="Server name..." style="width: 100%; margin-bottom: 12px; padding: 10px 14px; border: 1px solid rgba(0,0,0,0.1); border-radius: 6px; background: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.8) 100%); color: #334155; font-family: inherit; box-shadow: inset 0 1px 3px rgba(0,0,0,0.08), 0 1px 0 rgba(255,255,255,0.8); text-shadow: 0 1px 1px rgba(255,255,255,0.8);">
+      <div id="serverError" style="color: #dc2626; font-size: 11px; margin-bottom: 12px; display: none; text-shadow: 0 1px 1px rgba(255,255,255,0.8);"></div>
+      <div class="voice-modal-buttons">
+        <button class="modal-button accept" onclick="createServer()">Create</button>
+        <button class="modal-button decline" onclick="closeCreateServerModal()">Cancel</button>
       </div>
     </div>
   </div>
@@ -121,6 +1319,19 @@
     let currentServer = 'general';
     let username = '';
     let userAvatar = '';
+    let isAdmin = false;
+    let pendingAvatar = null;
+    let allServers = [];
+    let onlineUsers = [];
+    let userProfile = null;
+    
+    // Voice chat variables
+    let localStream = null;
+    let remoteStream = null;
+    let peerConnection = null;
+    let isMuted = false;
+    let isInCall = false;
+    let incomingCallData = null;
 
     const servers = [
       { name: 'general', icon: '💬' },
@@ -130,53 +1341,496 @@
       { name: 'music', icon: '🎵' }
     ];
 
+    // WebRTC configuration
+    const rtcConfig = {
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' }
+      ]
+    };
+
     function generateAvatar(name) {
-      const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#dda0dd', '#98d8c8'];
+      const colors = ['#3b82f6', '#1d4ed8', '#1e40af', '#1e3a8a', '#312e81', '#4c1d95', '#7c3aed', '#a855f7'];
       const color = colors[name.charCodeAt(0) % colors.length];
-      return `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><rect width='32' height='32' fill='${color}' rx='16'/><text x='16' y='20' font-family='Arial' font-size='14' fill='white' text-anchor='middle'>${name.charAt(0).toUpperCase()}</text></svg>`;
+      return `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 36 36'><defs><linearGradient id='grad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='${color}'/><stop offset='100%' stop-color='${color}dd'/></linearGradient></defs><circle cx='18' cy='18' r='18' fill='url(%23grad)'/><text x='18' y='23' font-family='Segoe UI' font-size='14' font-weight='600' fill='white' text-anchor='middle'>${name.charAt(0).toUpperCase()}</text></svg>`;
     }
 
     function updateServerList() {
-      const sidebar = document.querySelector('.sidebar');
-      sidebar.innerHTML = '';
-      servers.forEach(server => {
-        const button = document.createElement('button');
-        button.innerHTML = `${server.icon} ${server.name}`;
-        button.onclick = () => selectServer(server.name);
-        if (server.name === currentServer) {
-          button.style.backgroundColor = '#5865f2';
-        }
-        sidebar.appendChild(button);
+      if (!socket) return;
+      
+      socket.emit('get_servers', (servers) => {
+        allServers = servers;
+        const serverButtons = document.getElementById('serverButtons');
+        serverButtons.innerHTML = '';
+
+        servers.forEach(server => {
+          const button = document.createElement('button');
+          button.className = 'server-button';
+          button.innerHTML = `
+            <span class="server-icon">${server.icon}</span>
+            <div class="server-info">
+              <div class="server-name">${server.name}</div>
+              <div class="server-meta">
+                ${server.isDefault ? '' : `by ${server.creator} • `}
+                <span class="online-count">${server.onlineCount} online</span>
+              </div>
+            </div>
+          `;
+          button.onclick = () => selectServer(server.name);
+
+          if (server.name === currentServer) {
+            button.classList.add('active');
+          }
+
+          serverButtons.appendChild(button);
+        });
       });
+    }
+
+    function updateOnlineUsers(users) {
+      onlineUsers = users;
+      const onlineCount = document.getElementById('onlineCount');
+      const onlineUsersList = document.getElementById('onlineUsersList');
+      
+      onlineCount.textContent = users.length;
+      onlineUsersList.innerHTML = '';
+
+      users.forEach(user => {
+        const userDiv = document.createElement('div');
+        userDiv.style.cssText = `
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 6px 8px;
+          margin-bottom: 4px;
+          background: var(--surface-secondary);
+          border-radius: 6px;
+          font-size: 11px;
+          border: 1px solid var(--border-primary);
+          box-shadow: inset 0 1px 0 var(--shadow-light), 0 1px 2px var(--shadow-dark);
+          cursor: pointer;
+          transition: all 0.2s ease;
+        `;
+        userDiv.onmouseover = () => {
+          userDiv.style.background = 'var(--surface-tertiary)';
+          userDiv.style.transform = 'translateY(-1px)';
+        };
+        userDiv.onmouseout = () => {
+          userDiv.style.background = 'var(--surface-secondary)';
+          userDiv.style.transform = 'translateY(0)';
+        };
+        
+        const displayName = user.profile?.displayName || user.name;
+        const customStatus = user.profile?.customStatus ? ` • ${user.profile.customStatus}` : '';
+        
+        userDiv.innerHTML = `
+          <img src="${user.avatar}" alt="${displayName}" style="width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--border-primary); box-shadow: 0 1px 3px var(--shadow-dark);">
+          <div style="flex: 1; min-width: 0;">
+            <div style="color: ${user.isAdmin ? 'var(--text-admin)' : 'var(--text-primary)'}; font-weight: 500; text-shadow: 0 1px 1px var(--shadow-light); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+              ${displayName}${user.isAdmin ? ' 👑' : ''}
+            </div>
+            ${user.profile?.customStatus ? `<div style="font-size: 9px; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${user.profile.customStatus}</div>` : ''}
+          </div>
+        `;
+        
+        userDiv.onclick = () => showUserProfile(user);
+        onlineUsersList.appendChild(userDiv);
+      });
+    }
+
+    function openCreateServerModal() {
+      document.getElementById('createServerModal').style.display = 'flex';
+      document.getElementById('serverNameInput').focus();
+      document.getElementById('serverError').style.display = 'none';
+    }
+
+    function closeCreateServerModal() {
+      document.getElementById('createServerModal').style.display = 'none';
+      document.getElementById('serverNameInput').value = '';
+      document.getElementById('serverError').style.display = 'none';
+    }
+
+    function createServer() {
+      const serverName = document.getElementById('serverNameInput').value.trim();
+      const errorDiv = document.getElementById('serverError');
+      
+      if (!serverName) {
+        errorDiv.textContent = 'Please enter a server name';
+        errorDiv.style.display = 'block';
+        return;
+      }
+      
+      socket.emit('create_server', { name: serverName }, (response) => {
+        if (response.success) {
+          closeCreateServerModal();
+          updateServerList();
+        } else {
+          errorDiv.textContent = response.message;
+          errorDiv.style.display = 'block';
+        }
+      });
+    }
+
+    function handleKeyPress(event) {
+      if (event.key === 'Enter') {
+        sendMessage();
+      }
+    }
+
+    // Voice chat functions
+    async function initializeVoiceChat() {
+      try {
+        localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        updateVoiceStatus('Voice: Ready');
+      } catch (error) {
+        console.error('Error accessing microphone:', error);
+        updateVoiceStatus('Voice: Permission Denied');
+      }
+    }
+
+    function updateVoiceStatus(status) {
+      document.getElementById('voiceStatus').textContent = status;
+    }
+
+    function toggleMute() {
+      if (!localStream) return;
+      
+      isMuted = !isMuted;
+      localStream.getAudioTracks().forEach(track => {
+        track.enabled = !isMuted;
+      });
+      
+      const muteBtn = document.getElementById('muteBtn');
+      muteBtn.innerHTML = isMuted ? '🔇 Unmute' : '🎤 Mute';
+      muteBtn.className = isMuted ? 'voice-button end' : 'voice-button mute';
+    }
+
+    async function startVoiceCall() {
+      if (!localStream) {
+        await initializeVoiceChat();
+        if (!localStream) return;
+      }
+
+      // For demo, we'll call a random user in the current server
+      // In a real app, you'd have a user list to select from
+      updateVoiceStatus('Voice: Calling...');
+      
+      try {
+        peerConnection = new RTCPeerConnection(rtcConfig);
+        
+        // Add local stream to peer connection
+        localStream.getTracks().forEach(track => {
+          peerConnection.addTrack(track, localStream);
+        });
+
+        // Handle remote stream
+        peerConnection.ontrack = (event) => {
+          remoteStream = event.streams[0];
+          playRemoteAudio(remoteStream);
+        };
+
+        // Handle ICE candidates
+        peerConnection.onicecandidate = (event) => {
+          if (event.candidate) {
+            socket.emit('voice_ice_candidate', {
+              target: 'broadcast', // In real app, target specific user
+              candidate: event.candidate
+            });
+          }
+        };
+
+        // Create and send offer
+        const offer = await peerConnection.createOffer();
+        await peerConnection.setLocalDescription(offer);
+        
+        socket.emit('voice_offer', {
+          target: 'broadcast', // In real app, target specific user
+          offer: offer
+        });
+
+        isInCall = true;
+        updateCallButton();
+        updateVoiceStatus('Voice: In Call');
+      } catch (error) {
+        console.error('Error starting voice call:', error);
+        updateVoiceStatus('Voice: Call Failed');
+      }
+    }
+
+    function endVoiceCall() {
+      if (peerConnection) {
+        peerConnection.close();
+        peerConnection = null;
+      }
+      
+      if (remoteStream) {
+        remoteStream.getTracks().forEach(track => track.stop());
+        remoteStream = null;
+      }
+      
+      isInCall = false;
+      updateCallButton();
+      updateVoiceStatus('Voice: Ready');
+      
+      socket.emit('voice_call_end', {
+        target: 'broadcast'
+      });
+    }
+
+    function updateCallButton() {
+      const callBtn = document.getElementById('callBtn');
+      if (isInCall) {
+        callBtn.innerHTML = '📞 End Call';
+        callBtn.className = 'voice-button end';
+        callBtn.onclick = endVoiceCall;
+      } else {
+        callBtn.innerHTML = '📞 Call';
+        callBtn.className = 'voice-button call';
+        callBtn.onclick = startVoiceCall;
+      }
+    }
+
+    function playRemoteAudio(stream) {
+      const audio = new Audio();
+      audio.srcObject = stream;
+      audio.play();
+    }
+
+    function showVoiceModal(title, message) {
+      document.getElementById('voiceModalTitle').textContent = title;
+      document.getElementById('voiceModalMessage').textContent = message;
+      document.getElementById('voiceModal').style.display = 'flex';
+    }
+
+    function hideVoiceModal() {
+      document.getElementById('voiceModal').style.display = 'none';
+    }
+
+    async function acceptVoiceCall() {
+      hideVoiceModal();
+      
+      if (!localStream) {
+        await initializeVoiceChat();
+        if (!localStream) return;
+      }
+
+      try {
+        peerConnection = new RTCPeerConnection(rtcConfig);
+        
+        localStream.getTracks().forEach(track => {
+          peerConnection.addTrack(track, localStream);
+        });
+
+        peerConnection.ontrack = (event) => {
+          remoteStream = event.streams[0];
+          playRemoteAudio(remoteStream);
+        };
+
+        peerConnection.onicecandidate = (event) => {
+          if (event.candidate && incomingCallData) {
+            socket.emit('voice_ice_candidate', {
+              target: incomingCallData.from,
+              candidate: event.candidate
+            });
+          }
+        };
+
+        isInCall = true;
+        updateCallButton();
+        updateVoiceStatus('Voice: In Call');
+        
+        socket.emit('voice_call_response', {
+          target: incomingCallData.from,
+          accepted: true
+        });
+      } catch (error) {
+        console.error('Error accepting call:', error);
+      }
+    }
+
+    function declineVoiceCall() {
+      hideVoiceModal();
+      
+      if (incomingCallData) {
+        socket.emit('voice_call_response', {
+          target: incomingCallData.from,
+          accepted: false
+        });
+      }
+      
+      incomingCallData = null;
     }
 
     window.setUsername = function () {
       const name = document.getElementById('usernameInput').value.trim();
-      if (!name || !socket) return;
+      const errorDiv = document.getElementById('error');
+
+      if (!name) {
+        errorDiv.textContent = 'Please enter a username';
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      if (!socket) {
+        errorDiv.textContent = 'Connection error. Please refresh the page.';
+        errorDiv.style.display = 'block';
+        return;
+      }
 
       userAvatar = generateAvatar(name);
       socket.emit('set_username', { name, avatar: userAvatar }, (res) => {
         if (res.success) {
           username = name;
+          isAdmin = res.isAdmin || false;
+          userProfile = res.profile || null;
           document.getElementById('usernameModal').style.display = 'none';
-          document.getElementById('chatUI').style.display = 'block';
+          document.getElementById('chatUI').style.display = 'flex';
+          updateProfile();
           updateServerList();
           socket.emit('join_server', currentServer);
+          initializeVoiceChat();
+          
+          // Get online users for current server
+          socket.emit('get_online_users', currentServer, (users) => {
+            updateOnlineUsers(users);
+          });
         } else {
-          document.getElementById('error').textContent = res.message;
+          errorDiv.textContent = res.message;
+          errorDiv.style.display = 'block';
         }
       });
     };
 
+    function updateProfile() {
+      document.getElementById('profileSection').style.display = 'flex';
+      document.getElementById('profileName').textContent = (userProfile?.displayName || username) + (isAdmin ? ' 👑' : '');
+      document.getElementById('profileAvatar').src = userAvatar;
+      document.getElementById('avatarPreview').src = userAvatar;
+      
+      // Update status
+      const statusText = userProfile?.customStatus || 'Online';
+      document.getElementById('profileStatus').textContent = statusText;
+    }
+
+    function openProfileModal() {
+      document.getElementById('profileModal').style.display = 'flex';
+      loadProfileData();
+    }
+
+    function closeProfileModal() {
+      document.getElementById('profileModal').style.display = 'none';
+    }
+
+    function loadProfileData() {
+      if (!socket || !userProfile) return;
+      
+      socket.emit('get_profile', null, (response) => {
+        if (response.success) {
+          userProfile = response.profile;
+          populateProfileForm(userProfile);
+        }
+      });
+    }
+
+    function populateProfileForm(profile) {
+      document.getElementById('profileModalAvatar').src = profile.avatar || userAvatar;
+      document.getElementById('profileModalName').textContent = (profile.displayName || profile.username) + (profile.isAdmin ? ' 👑' : '');
+      document.getElementById('profileModalJoined').textContent = `Joined: ${new Date(profile.joinedAt).toLocaleDateString()}`;
+      
+      document.getElementById('profileDisplayName').value = profile.displayName || '';
+      document.getElementById('profileBio').value = profile.bio || '';
+      document.getElementById('profileCustomStatus').value = profile.customStatus || '';
+      document.getElementById('profilePronouns').value = profile.pronouns || '';
+      document.getElementById('profileLocation').value = profile.location || '';
+      document.getElementById('profileWebsite').value = profile.website || '';
+      document.getElementById('profileBirthday').value = profile.birthday || '';
+      document.getElementById('profileFavoriteColor').value = profile.favoriteColor || '#3b82f6';
+    }
+
+    function saveProfile() {
+      const profileData = {
+        displayName: document.getElementById('profileDisplayName').value.trim(),
+        bio: document.getElementById('profileBio').value.trim(),
+        customStatus: document.getElementById('profileCustomStatus').value.trim(),
+        pronouns: document.getElementById('profilePronouns').value.trim(),
+        location: document.getElementById('profileLocation').value.trim(),
+        website: document.getElementById('profileWebsite').value.trim(),
+        birthday: document.getElementById('profileBirthday').value,
+        favoriteColor: document.getElementById('profileFavoriteColor').value
+      };
+
+      const errorDiv = document.getElementById('profileError');
+      errorDiv.style.display = 'none';
+
+      socket.emit('update_profile', profileData, (response) => {
+        if (response.success) {
+          userProfile = response.profile;
+          updateProfile();
+          closeProfileModal();
+        } else {
+          errorDiv.textContent = response.message;
+          errorDiv.style.display = 'block';
+        }
+      });
+    }
+
+    function openAvatarModal() {
+      document.getElementById('avatarModal').style.display = 'flex';
+      document.getElementById('avatarPreview').src = userAvatar;
+      pendingAvatar = null;
+    }
+
+    function closeAvatarModal() {
+      document.getElementById('avatarModal').style.display = 'none';
+      pendingAvatar = null;
+    }
+
+    function saveAvatar() {
+      if (pendingAvatar) {
+        userAvatar = pendingAvatar;
+        socket.emit('update_avatar', { avatar: userAvatar });
+        updateProfile();
+      }
+      closeAvatarModal();
+    }
+
+    function handleAvatarUpload(file) {
+      if (!file || !file.type.startsWith('image/')) {
+        alert('Please select a valid image file');
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        alert('File size must be less than 5MB');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        pendingAvatar = e.target.result;
+        document.getElementById('avatarPreview').src = pendingAvatar;
+      };
+      reader.readAsDataURL(file);
+    }
+
     window.selectServer = function (server) {
       if (server === currentServer || !socket) return;
+
       socket.emit('leave_server', currentServer);
       currentServer = server;
-      const serverObj = servers.find(s => s.name === server);
-      document.getElementById('currentServer').innerHTML = `${serverObj.icon} ${server}`;
+      const serverObj = allServers.find(s => s.name === server);
+
+      document.getElementById('serverIcon').textContent = serverObj ? serverObj.icon : '💬';
+      document.getElementById('serverName').textContent = server;
       document.getElementById('chatBox').innerHTML = '';
+
       updateServerList();
       socket.emit('join_server', server);
+      
+      // Get online users for the new server
+      socket.emit('get_online_users', server, (users) => {
+        updateOnlineUsers(users);
+      });
     };
 
     window.sendMessage = function () {
@@ -188,14 +1842,14 @@
         reader.onload = function (e) {
           const base64 = e.target.result;
           const isImage = file.type.startsWith('image/');
-          
+
           let messageContent;
           if (isImage) {
-            messageContent = `<strong>${username} shared an image:</strong><br><img src="${base64}" alt="${file.name}" style="max-width: 300px; max-height: 200px; border-radius: 8px; margin-top: 5px;">`;
+            messageContent = `<strong>${username} shared an image:</strong><br><img src="${base64}" alt="${file.name}" style="max-width: 280px; max-height: 180px; border-radius: 8px; margin-top: 6px; border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 2px 8px rgba(0,0,0,0.1);">`;
           } else {
-            messageContent = `<strong>${username} uploaded a file:</strong><br><a href="${base64}" download="${file.name}" target="_blank">${file.name}</a>`;
+            messageContent = `<strong>${username} uploaded a file:</strong><br><a href="${base64}" download="${file.name}" target="_blank" style="color: #3b82f6; text-decoration: none; font-weight: 500;">${file.name}</a>`;
           }
-          
+
           socket.emit('send_message', {
             server: currentServer,
             message: messageContent,
@@ -214,39 +1868,278 @@
       }
     };
 
+    function formatTime() {
+      return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function addMessage(data) {
+      const chatBox = document.getElementById('chatBox');
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'message';
+
+      if (data.user === 'System' || data.user === '🚨 ADMIN ANNOUNCEMENT') {
+        messageDiv.className += ' system';
+        messageDiv.innerHTML = data.message;
+      } else {
+        const usernameClass = data.isAdmin ? 'username admin' : 'username';
+        messageDiv.innerHTML = `
+          <div class="message-content">
+            <img src="${data.avatar || generateAvatar(data.user)}" alt="${data.user}" class="user-avatar">
+            <div class="message-body">
+              <div class="message-header">
+                <span class="${usernameClass}">${data.user}${data.isAdmin ? ' 👑' : ''}</span>
+                <span class="timestamp">${formatTime()}</span>
+              </div>
+              <div class="message-text">${data.message}</div>
+            </div>
+          </div>
+        `;
+      }
+
+      chatBox.appendChild(messageDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      setTimeout(() => {
+        messageDiv.style.opacity = '1';
+      }, 10);
+    }
+
     function initChat() {
       socket = io();
 
       socket.on('chat_message', (data) => {
         if (data.server !== currentServer) return;
-        const chatBox = document.getElementById('chatBox');
-        const div = document.createElement('div');
-        div.className = 'message' + (data.user === 'System' ? ' system' : '');
-        
-        if (data.user === 'System') {
-          div.innerHTML = data.message;
-        } else {
-          div.innerHTML = `
-            <div style="display: flex; align-items: flex-start; gap: 8px;">
-              <img src="${data.avatar || generateAvatar(data.user)}" alt="${data.user}" style="width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;">
-              <div>
-                <span class="user">${data.user}</span>
-                <div>${data.message}</div>
-              </div>
-            </div>
-          `;
+        addMessage(data);
+      });
+
+      socket.on('clear_chat', () => {
+        document.getElementById('chatBox').innerHTML = '';
+      });
+
+      // Voice chat events
+      socket.on('incoming_voice_call', (data) => {
+        incomingCallData = data;
+        showVoiceModal('Incoming Voice Call', `${data.fromUser} is calling you...`);
+      });
+
+      socket.on('voice_offer', async (data) => {
+        // Handle incoming voice offer
+        console.log('Received voice offer from:', data.fromUser);
+      });
+
+      socket.on('voice_answer', async (data) => {
+        // Handle voice answer
+        console.log('Received voice answer');
+      });
+
+      socket.on('voice_ice_candidate', async (data) => {
+        // Handle ICE candidate
+        if (peerConnection && data.candidate) {
+          await peerConnection.addIceCandidate(data.candidate);
         }
-        
-        chatBox.appendChild(div);
-        chatBox.scrollTop = chatBox.scrollHeight;
+      });
+
+      socket.on('voice_call_ended', () => {
+        endVoiceCall();
+      });
+
+      socket.on('kicked', (data) => {
+        alert('You have been kicked: ' + data.reason);
+        location.reload();
+      });
+
+      socket.on('banned', (data) => {
+        alert('You have been banned: ' + data.reason);
+        location.reload();
+      });
+
+      // Server and user management events
+      socket.on('server_created', (server) => {
+        updateServerList();
+      });
+
+      socket.on('servers_updated', (servers) => {
+        allServers = servers;
+        updateServerList();
+      });
+
+      socket.on('online_users_updated', (data) => {
+        if (data.server === currentServer) {
+          updateOnlineUsers(data.users);
+        }
+      });
+
+      socket.on('connect', () => {
+        console.log('Connected to server');
+      });
+
+      socket.on('disconnect', () => {
+        console.log('Disconnected from server');
+        updateVoiceStatus('Voice: Disconnected');
       });
     }
 
     // Initialize when DOM loads
     document.addEventListener('DOMContentLoaded', function() {
+      loadTheme();
       initChat();
       updateServerList();
+      document.getElementById('usernameInput').focus();
+      
+      // Avatar upload handlers
+      const avatarInput = document.getElementById('avatarInput');
+      const uploadArea = document.getElementById('avatarUploadArea');
+      
+      avatarInput.addEventListener('change', function(e) {
+        if (e.target.files[0]) {
+          handleAvatarUpload(e.target.files[0]);
+        }
+      });
+      
+      // Drag and drop
+      uploadArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+      });
+      
+      uploadArea.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+      });
+      
+      uploadArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        const files = e.dataTransfer.files;
+        if (files[0]) {
+          handleAvatarUpload(files[0]);
+        }
+      });
     });
+
+    // Theme management
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      
+      document.documentElement.setAttribute('data-theme', newTheme);
+      
+      // Update theme toggle icon
+      const themeToggle = document.getElementById('themeToggle');
+      themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+      
+      // Save theme preference
+      localStorage.setItem('theme', newTheme);
+    }
+
+    // Load saved theme on page load
+    function loadTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      const theme = savedTheme || systemTheme;
+      
+      document.documentElement.setAttribute('data-theme', theme);
+      
+      const themeToggle = document.getElementById('themeToggle');
+      if (themeToggle) {
+        themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+      }
+    }
+
+    function showUserProfile(user) {
+      if (!user.profile) return;
+      
+      const profile = user.profile;
+      
+      // Create profile viewer modal
+      let profileViewer = document.getElementById('profileViewer');
+      if (!profileViewer) {
+        profileViewer = document.createElement('div');
+        profileViewer.id = 'profileViewer';
+        profileViewer.className = 'avatar-modal';
+        profileViewer.innerHTML = `
+          <div class="avatar-modal-content" style="min-width: 400px;">
+            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px; padding: 16px; background: var(--surface-secondary); border-radius: 8px; border: 1px solid var(--border-primary);">
+              <img src="" alt="Profile" id="viewerAvatar" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--border-primary);">
+              <div style="flex: 1;">
+                <div style="font-size: 20px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px;" id="viewerName"></div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 6px;" id="viewerUsername"></div>
+                <div style="font-size: 12px; color: var(--text-secondary);" id="viewerJoined"></div>
+              </div>
+            </div>
+            <div id="viewerContent" style="text-align: left; display: flex; flex-direction: column; gap: 12px;"></div>
+            <div class="voice-modal-buttons" style="margin-top: 20px;">
+              <button class="modal-button decline" onclick="closeProfileViewer()">Close</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(profileViewer);
+      }
+      
+      // Populate profile data
+      document.getElementById('viewerAvatar').src = profile.avatar;
+      document.getElementById('viewerName').textContent = (profile.displayName || profile.username) + (profile.isAdmin ? ' 👑' : '');
+      document.getElementById('viewerUsername').textContent = `@${profile.username}`;
+      document.getElementById('viewerJoined').textContent = `Joined ${new Date(profile.joinedAt).toLocaleDateString()}`;
+      
+      const content = document.getElementById('viewerContent');
+      content.innerHTML = '';
+      
+      if (profile.bio) {
+        content.innerHTML += `<div><strong style="color: var(--text-primary);">Bio:</strong><br><span style="color: var(--text-secondary);">${profile.bio}</span></div>`;
+      }
+      
+      if (profile.customStatus) {
+        content.innerHTML += `<div><strong style="color: var(--text-primary);">Status:</strong> <span style="color: var(--text-secondary);">${profile.customStatus}</span></div>`;
+      }
+      
+      if (profile.pronouns) {
+        content.innerHTML += `<div><strong style="color: var(--text-primary);">Pronouns:</strong> <span style="color: var(--text-secondary);">${profile.pronouns}</span></div>`;
+      }
+      
+      if (profile.location) {
+        content.innerHTML += `<div><strong style="color: var(--text-primary);">Location:</strong> <span style="color: var(--text-secondary);">${profile.location}</span></div>`;
+      }
+      
+      if (profile.website) {
+        content.innerHTML += `<div><strong style="color: var(--text-primary);">Website:</strong> <a href="${profile.website}" target="_blank" style="color: var(--text-brand); text-decoration: none;">${profile.website}</a></div>`;
+      }
+      
+      if (profile.birthday) {
+        const birthday = new Date(profile.birthday).toLocaleDateString();
+        content.innerHTML += `<div><strong style="color: var(--text-primary);">Birthday:</strong> <span style="color: var(--text-secondary);">${birthday}</span></div>`;
+      }
+      
+      if (profile.badges && profile.badges.length > 0) {
+        content.innerHTML += `<div><strong style="color: var(--text-primary);">Badges:</strong> <span style="color: var(--text-secondary);">${profile.badges.join(', ')}</span></div>`;
+      }
+      
+      profileViewer.style.display = 'flex';
+    }
+
+    function closeProfileViewer() {
+      const profileViewer = document.getElementById('profileViewer');
+      if (profileViewer) {
+        profileViewer.style.display = 'none';
+      }
+    }
+
+    // Expose functions to global scope
+    window.toggleTheme = toggleTheme;
+    window.toggleMute = toggleMute;
+    window.startVoiceCall = startVoiceCall;
+    window.acceptVoiceCall = acceptVoiceCall;
+    window.declineVoiceCall = declineVoiceCall;
+    window.openAvatarModal = openAvatarModal;
+    window.closeAvatarModal = closeAvatarModal;
+    window.saveAvatar = saveAvatar;
+    window.openCreateServerModal = openCreateServerModal;
+    window.closeCreateServerModal = closeCreateServerModal;
+    window.createServer = createServer;
+    window.openProfileModal = openProfileModal;
+    window.closeProfileModal = closeProfileModal;
+    window.saveProfile = saveProfile;
+    window.closeProfileViewer = closeProfileViewer;
   </script>
 </body>
 </html>
