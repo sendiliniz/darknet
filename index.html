@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QuickChat</title>
+  <title>DarkNet</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
@@ -15,7 +15,7 @@
       height: 100vh;
     }
     .sidebar {
-      width: 100px;
+      width: 120px;
       background-color: #1a1c2c;
       display: flex;
       flex-direction: column;
@@ -28,8 +28,14 @@
       color: white;
       border: none;
       border-radius: 8px;
-      padding: 10px;
+      padding: 12px 8px;
       cursor: pointer;
+      font-size: 12px;
+      text-align: left;
+      transition: background-color 0.2s;
+    }
+    .sidebar button:hover {
+      background-color: #404466;
     }
     .container {
       flex: 1;
@@ -49,7 +55,7 @@
       border-radius: 8px;
       font-size: 1rem;
     }
-    input {
+    input[type="text"] {
       width: calc(100% - 24px);
       margin-bottom: 10px;
     }
@@ -81,16 +87,14 @@
       display: flex;
       gap: 10px;
     }
-    #sendBox input {
+    #sendBox input[type="text"] {
       flex: 1;
     }
   </style>
 </head>
 <body>
   <div class="sidebar">
-    <button onclick="selectServer('general')"># General</button>
-    <button onclick="selectServer('games')"># Games</button>
-    <button onclick="selectServer('random')"># Random</button>
+    <!-- Server buttons will be dynamically generated -->
   </div>
   <div class="container">
     <div id="usernameModal">
@@ -105,6 +109,7 @@
       <div id="chatBox"></div>
       <div id="sendBox">
         <input id="message" type="text" placeholder="Type a message...">
+        <input type="file" id="fileInput">
         <button onclick="sendMessage()">Send</button>
       </div>
     </div>
@@ -112,58 +117,135 @@
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
-    const socket = io();
+    let socket = null;
     let currentServer = 'general';
     let username = '';
+    let userAvatar = '';
 
-    const chatBox = document.getElementById('chatBox');
-    const usernameModal = document.getElementById('usernameModal');
-    const chatUI = document.getElementById('chatUI');
-    const errorText = document.getElementById('error');
-    const currentServerHeader = document.getElementById('currentServer');
+    const servers = [
+      { name: 'general', icon: '💬' },
+      { name: 'games', icon: '🎮' },
+      { name: 'random', icon: '🎲' },
+      { name: 'tech', icon: '💻' },
+      { name: 'music', icon: '🎵' }
+    ];
 
-    function setUsername() {
-      const name = document.getElementById('usernameInput').value.trim();
-      if (!name) return;
+    function generateAvatar(name) {
+      const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#dda0dd', '#98d8c8'];
+      const color = colors[name.charCodeAt(0) % colors.length];
+      return `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'><rect width='32' height='32' fill='${color}' rx='16'/><text x='16' y='20' font-family='Arial' font-size='14' fill='white' text-anchor='middle'>${name.charAt(0).toUpperCase()}</text></svg>`;
+    }
 
-      socket.emit('set_username', name, (res) => {
-        if (res.success) {
-          username = name;
-          usernameModal.style.display = 'none';
-          chatUI.style.display = 'block';
-          socket.emit('join_server', currentServer);
-        } else {
-          errorText.textContent = res.message;
+    function updateServerList() {
+      const sidebar = document.querySelector('.sidebar');
+      sidebar.innerHTML = '';
+      servers.forEach(server => {
+        const button = document.createElement('button');
+        button.innerHTML = `${server.icon} ${server.name}`;
+        button.onclick = () => selectServer(server.name);
+        if (server.name === currentServer) {
+          button.style.backgroundColor = '#5865f2';
         }
+        sidebar.appendChild(button);
       });
     }
 
-    function selectServer(server) {
-      if (server === currentServer) return;
+    window.setUsername = function () {
+      const name = document.getElementById('usernameInput').value.trim();
+      if (!name || !socket) return;
+
+      userAvatar = generateAvatar(name);
+      socket.emit('set_username', { name, avatar: userAvatar }, (res) => {
+        if (res.success) {
+          username = name;
+          document.getElementById('usernameModal').style.display = 'none';
+          document.getElementById('chatUI').style.display = 'block';
+          updateServerList();
+          socket.emit('join_server', currentServer);
+        } else {
+          document.getElementById('error').textContent = res.message;
+        }
+      });
+    };
+
+    window.selectServer = function (server) {
+      if (server === currentServer || !socket) return;
       socket.emit('leave_server', currentServer);
       currentServer = server;
-      currentServerHeader.textContent = '#' + server;
-      chatBox.innerHTML = '';
+      const serverObj = servers.find(s => s.name === server);
+      document.getElementById('currentServer').innerHTML = `${serverObj.icon} ${server}`;
+      document.getElementById('chatBox').innerHTML = '';
+      updateServerList();
       socket.emit('join_server', server);
-    }
+    };
 
-    function sendMessage() {
+    window.sendMessage = function () {
       const msg = document.getElementById('message').value.trim();
-      if (msg) {
-        socket.emit('send_message', { server: currentServer, message: msg });
+      const file = document.getElementById('fileInput').files[0];
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const base64 = e.target.result;
+          const isImage = file.type.startsWith('image/');
+          
+          let messageContent;
+          if (isImage) {
+            messageContent = `<strong>${username} shared an image:</strong><br><img src="${base64}" alt="${file.name}" style="max-width: 300px; max-height: 200px; border-radius: 8px; margin-top: 5px;">`;
+          } else {
+            messageContent = `<strong>${username} uploaded a file:</strong><br><a href="${base64}" download="${file.name}" target="_blank">${file.name}</a>`;
+          }
+          
+          socket.emit('send_message', {
+            server: currentServer,
+            message: messageContent,
+            avatar: userAvatar
+          });
+        };
+        reader.readAsDataURL(file);
+        document.getElementById('fileInput').value = '';
+      } else if (msg) {
+        socket.emit('send_message', { 
+          server: currentServer, 
+          message: msg,
+          avatar: userAvatar
+        });
         document.getElementById('message').value = '';
       }
+    };
+
+    function initChat() {
+      socket = io();
+
+      socket.on('chat_message', (data) => {
+        if (data.server !== currentServer) return;
+        const chatBox = document.getElementById('chatBox');
+        const div = document.createElement('div');
+        div.className = 'message' + (data.user === 'System' ? ' system' : '');
+        
+        if (data.user === 'System') {
+          div.innerHTML = data.message;
+        } else {
+          div.innerHTML = `
+            <div style="display: flex; align-items: flex-start; gap: 8px;">
+              <img src="${data.avatar || generateAvatar(data.user)}" alt="${data.user}" style="width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;">
+              <div>
+                <span class="user">${data.user}</span>
+                <div>${data.message}</div>
+              </div>
+            </div>
+          `;
+        }
+        
+        chatBox.appendChild(div);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      });
     }
 
-    socket.on('chat_message', (data) => {
-      if (data.server !== currentServer) return;
-      const div = document.createElement('div');
-      div.className = 'message' + (data.user === 'System' ? ' system' : '');
-      div.innerHTML = data.user === 'System'
-        ? data.message
-        : `<span class="user">${data.user}</span>: ${data.message}`;
-      chatBox.appendChild(div);
-      chatBox.scrollTop = chatBox.scrollHeight;
+    // Initialize when DOM loads
+    document.addEventListener('DOMContentLoaded', function() {
+      initChat();
+      updateServerList();
     });
   </script>
 </body>
