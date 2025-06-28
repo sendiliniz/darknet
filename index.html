@@ -3,20 +3,168 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DarkNet Chat</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.22.9/babel.min.js"></script>
+  <title>QuickChat</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #0e101c;
+      color: #fff;
+      display: flex;
+      height: 100vh;
+    }
+    .sidebar {
+      width: 100px;
+      background-color: #1a1c2c;
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+      gap: 10px;
+      border-right: 2px solid #2f334d;
+    }
+    .sidebar button {
+      background-color: #2f334d;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px;
+      cursor: pointer;
+    }
+    .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #1a1c2c;
+      border-radius: 0 12px 12px 0;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+      overflow: hidden;
+    }
+    #usernameModal, #chatUI {
+      padding: 20px;
+    }
+    input, button {
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    input {
+      width: calc(100% - 24px);
+      margin-bottom: 10px;
+    }
+    button {
+      background-color: #5865f2;
+      color: #fff;
+      cursor: pointer;
+    }
+    #chatBox {
+      background: #2a2d45;
+      height: 300px;
+      overflow-y: auto;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    .message {
+      margin-bottom: 10px;
+    }
+    .message.system {
+      color: #a0a0a0;
+      font-style: italic;
+    }
+    .message span.user {
+      font-weight: 600;
+      color: #70cfff;
+    }
+    #sendBox {
+      display: flex;
+      gap: 10px;
+    }
+    #sendBox input {
+      flex: 1;
+    }
+  </style>
 </head>
-<body class="bg-gradient-to-b from-gray-900 to-gray-800">
-  <div id="root" class="min-h-screen text-gray-100">
-    <!-- Fallback message if JavaScript fails -->
-    <div class="flex items-center justify-center h-full">
-      <p class="text-white">Loading DarkNet Chat... (Check console for errors)</p>
+<body>
+  <div class="sidebar">
+    <button onclick="selectServer('general')"># General</button>
+    <button onclick="selectServer('games')"># Games</button>
+    <button onclick="selectServer('random')"># Random</button>
+  </div>
+  <div class="container">
+    <div id="usernameModal">
+      <h2>Enter Your Username</h2>
+      <input type="text" id="usernameInput" placeholder="Your name...">
+      <button onclick="setUsername()">Join Chat</button>
+      <p id="error" style="color: red;"></p>
+    </div>
+
+    <div id="chatUI" style="display: none;">
+      <h3 id="currentServer">#general</h3>
+      <div id="chatBox"></div>
+      <div id="sendBox">
+        <input id="message" type="text" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send</button>
+      </div>
     </div>
   </div>
-  <script type="text/babel" src="chat.js"></script>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    let currentServer = 'general';
+    let username = '';
+
+    const chatBox = document.getElementById('chatBox');
+    const usernameModal = document.getElementById('usernameModal');
+    const chatUI = document.getElementById('chatUI');
+    const errorText = document.getElementById('error');
+    const currentServerHeader = document.getElementById('currentServer');
+
+    function setUsername() {
+      const name = document.getElementById('usernameInput').value.trim();
+      if (!name) return;
+
+      socket.emit('set_username', name, (res) => {
+        if (res.success) {
+          username = name;
+          usernameModal.style.display = 'none';
+          chatUI.style.display = 'block';
+          socket.emit('join_server', currentServer);
+        } else {
+          errorText.textContent = res.message;
+        }
+      });
+    }
+
+    function selectServer(server) {
+      if (server === currentServer) return;
+      socket.emit('leave_server', currentServer);
+      currentServer = server;
+      currentServerHeader.textContent = '#' + server;
+      chatBox.innerHTML = '';
+      socket.emit('join_server', server);
+    }
+
+    function sendMessage() {
+      const msg = document.getElementById('message').value.trim();
+      if (msg) {
+        socket.emit('send_message', { server: currentServer, message: msg });
+        document.getElementById('message').value = '';
+      }
+    }
+
+    socket.on('chat_message', (data) => {
+      if (data.server !== currentServer) return;
+      const div = document.createElement('div');
+      div.className = 'message' + (data.user === 'System' ? ' system' : '');
+      div.innerHTML = data.user === 'System'
+        ? data.message
+        : `<span class="user">${data.user}</span>: ${data.message}`;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    });
+  </script>
 </body>
 </html>
