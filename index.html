@@ -32,6 +32,7 @@
       const [messages, setMessages] = useState([]);
       const [isConnected, setIsConnected] = useState(false);
       const [error, setError] = useState('');
+      const [isJoining, setIsJoining] = useState(false);
       const fileInputRef = useRef(null);
 
       useEffect(() => {
@@ -41,11 +42,13 @@
 
         socket.on('usernameTaken', () => {
           setError('Username is already taken');
+          setIsJoining(false);
           socket.disconnect();
         });
 
         socket.on('joined', () => {
           setIsConnected(true);
+          setIsJoining(false);
           setError('');
         });
 
@@ -55,6 +58,7 @@
 
         socket.on('error', (err) => {
           setError(err);
+          setIsJoining(false);
         });
 
         return () => {
@@ -68,7 +72,8 @@
 
       const handleJoin = (e) => {
         e.preventDefault();
-        if (username.trim()) {
+        if (username.trim() && !isJoining) {
+          setIsJoining(true);
           socket.connect();
           socket.emit('join', username.trim().toLowerCase());
         }
@@ -105,7 +110,7 @@
             type: file.type.startsWith('image/') ? 'image' : 'video',
             data: reader.result,
           });
-          fileInputRef.current.value = ''; // Clear input
+          fileInputRef.current.value = '';
         };
         reader.onerror = () => setError('Failed to read file');
         reader.readAsDataURL(file);
@@ -124,13 +129,19 @@
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Choose a username"
                 className="w-full p-3 mb-4 bg-gray-900/50 rounded-lg border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-200"
+                disabled={isJoining}
               />
               {error && <p className="text-red-400 mb-4 text-center">{error}</p>}
               <button
                 type="submit"
-                className="w-full p-3 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-200 font-semibold"
+                className={`w-full p-3 rounded-lg font-semibold transition-all duration-200 ${
+                  isJoining
+                    ? 'bg-gray-600 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700'
+                }`}
+                disabled={isJoining}
               >
-                Enter Chat
+                {isJoining ? 'Joining...' : 'Enter Chat'}
               </button>
             </form>
           </div>
